@@ -8,10 +8,10 @@
 # A new revision will be released to this soon with a FrontEnd GUI that can run locally or on a server
 # Script to read IPs from a CSV and send to VirusTotal in batches of 990
 import csv, requests, time
-
-CSV_FILE = '/Users/testuser/Documents/ip.csv'
-API_KEY = 'YOUR_VIRUSTOTAL_API_KEY'  # Replace with your actual API key
-VT_URL = 'https://www.virustotal.com/api/v3/ip_addresses/batch'
+CSV_FILE = '/Users/analyst/Downloads/iplist2.csv'
+API_KEY = '2e5e0cf25ac70e053c23470a6750a8b901156de12c206ac52da5e97919cbdbc9'  # Replace with your actual API key
+ip_results = []
+vt_results = []
 BATCH_SIZE = 990
 
 def read_ips_from_csv(csv_file):
@@ -25,19 +25,17 @@ def read_ips_from_csv(csv_file):
                     ips.append(item)
     return ips
 
-def send_batch_to_virustotal(ip_batch):
-    headers = {
-        'x-apikey': API_KEY,
-        'Content-Type': 'application/json'
-    }
-    data = {"ips": ip_batch}
-    response = requests.post(VT_URL, headers=headers, json=data)
-    if response.status_code == 200:
-        print(f"Batch of {len(ip_batch)} IPs sent successfully.")
-        return response.json()
-    else:
-        print(f"Error: {response.status_code} - {response.text}")
-        return None
+def send_ip_to_virustotal(ips):
+    for ip in ips:
+        VT_URL = f'https://www.virustotal.com/api/v3/ip_addresses/{ip}'
+        headers = {
+            'x-apikey': API_KEY,
+            'Content-Type': 'application/json'
+        }
+        response = requests.get(VT_URL, headers=headers)
+        print(response.text)
+        ip_results.append(response.text)
+    return ip_results
 
 def main():
     ips = read_ips_from_csv(CSV_FILE)
@@ -45,7 +43,9 @@ def main():
     for i in range(0, len(ips), BATCH_SIZE):
         batch = ips[i:i+BATCH_SIZE]
         print(f"Sending batch {i//BATCH_SIZE + 1} ({len(batch)} IPs)...")
-        result = send_batch_to_virustotal(batch)
+        result = send_ip_to_virustotal(batch)
+        print(result)
+        
         time.sleep(1)  # Still testing to see how long this should be, not sure yet
 
 if __name__ == "__main__":

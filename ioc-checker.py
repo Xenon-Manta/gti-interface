@@ -8,8 +8,8 @@
 # A new revision will be released to this soon with a FrontEnd GUI that can run locally or on a server
 # Script to read IPs from a CSV and send to VirusTotal in batches of 990
 import csv, requests, time
-CSV_FILE = '/Users/analyst/Downloads/iplist2.csv'
-API_KEY = '2e5e0cf25ac70e053c23470a6750a8b901156de12c206ac52da5e97919cbdbc9'  # Replace with your actual API key
+CSV_FILE = '/Users/testuser/Downloads/iplist2.csv'
+API_KEY = 'KEY HERE'  # Replace with your actual API key
 ip_results = []
 vt_results = []
 BATCH_SIZE = 990
